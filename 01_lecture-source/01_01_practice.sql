@@ -1,3 +1,5 @@
+-- use : 스키마에 볼드체적용되면서 사용할 수 있게 된다.
+
 -- 모든 행 모든 컬럼 조회
 -- EMPLOYEE테이블에서 모든 정보 조회
 
@@ -153,6 +155,7 @@ where
 	EMP_NAME not like '이%';
     
 -- J2직급의 급여 200만원 이상 받는 직원이거나
+use employee;
 -- J7 직급인 직원의 이름, 급여, 직급코드 조회
 
 select
@@ -176,4 +179,6 @@ from
 	employee
 where
 	JOB_CODE in ('J2','J7') and Salary>=2000000;
+    
+
 

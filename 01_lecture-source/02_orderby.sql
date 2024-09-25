@@ -1,4 +1,5 @@
 -- use : 스키마에 볼드체적용되면서 사용할 수 있게 된다.
+use menudb;
 
 -- order by 
 -- order by 절은 select 절과 함께 사용을 하며
