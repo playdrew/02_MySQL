@@ -117,16 +117,19 @@ where
 -- (사용 테이블 : employee, job, sal_grade)
 
 select
-	e.EMP_NAME
-    ,j.JOB_NAME
-    ,e.salary
-    ,e.salary * e.bonus as '보너스 포함 연봉'
+	b.EMP_NAME,	  -- 사원명    /  employee  b
+	c.JOB_NAME,	  -- 직급명    / 	job  c
+	b.SALARY,		  -- 급여 	 /  employee  b
+	ifnull((SALARY * 12) + (SALARY * BONUS), SALARY * 12) as '보너스포함 연봉'	  -- 최소급여   / sal_grade  a
+
 from
-	employee e
-    join
-    job as j on e.JOB_CODE = j.JOB_CODE
+	employee b
+    
+join sal_grade a on a.SAL_LEVEL = b.SAL_LEVEL
+join job c on b.JOB_CODE = c.JOB_CODE
+
 where
-	e.bonus is not null; 
+	b.SALARY > a.MIN_SAL;
 	
 
 
@@ -148,7 +151,7 @@ from
     join
     nation as n on l.NATIONAL_CODE = n.NATIONAL_CODE
 where
-	n.NATIONAL_NAME like '한국' and n.NATIONAL_NAME like '일본';
+	n.NATIONAL_NAME like '한국'or n.NATIONAL_NAME ='일본';
     
     
 
