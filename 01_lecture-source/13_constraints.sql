@@ -78,6 +78,7 @@ insert into user_unique values
 -- 한 행만 가지고 있어야 합니다. 유일한 값이 어야합니다.
 -- category_code price orderable_status menu_name 등등 중복될 수 있으면 피하는게 좋고 menu_code 같은 유일한 값을 하는게 좋습니다.
 -- user_no phone 을 unique 이면서 not null 이에요 1번회원이 010-5 1번회원이 010-6번호를 가지고 있어요 이러면 된다는데 왠지 모른다.. 
+-- 프라이머리 키가 한 행을 식별하는데 프라이머리 1,1 1,2 2,1 2,2 복합키는 유일한 값을 2개로 묶어서 관리한다. 유일한 값이 하나라고 치면은 유일한 값을 셋트로 관리한다.
 
 drop table if exists user_pk;
 create table if not exists user_pk(
