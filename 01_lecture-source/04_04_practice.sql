@@ -143,19 +143,107 @@ WHERE
 -- 단, 급여와 급여 평균은 만원단위로 계산하세요
 -- 힌트 : round(컬럼명, -5)
 
+USE EMPLOYEE;
+
+SELECT 
+    E.EMP_ID AS 사번,
+    E.EMP_NAME AS 이름,
+    E.JOB_CODE AS 직급코드,
+    E.SALARY AS 급여
+FROM 
+    EMPLOYEE E
+WHERE 
+    ROUND(E.SALARY, -5) = (
+        SELECT 
+            ROUND(AVG(SALARY), -5) 
+        FROM 
+            EMPLOYEE 
+        WHERE 
+            JOB_CODE = E.JOB_CODE
+    );
+
 -- 8.퇴사한 여직원과 같은 부서, 같은 직급에 해당하는
 -- 사원의 이름, 직급, 부서, 입사일을 조회
+
+SELECT
+	EMP_NAME AS 사원이름
+    ,JOB_NAME AS 직급
+    ,DEPT_TITLE AS 부서
+    ,HIRE_DATE AS 입사일
+FROM
+	employee e join department d on (e.DEPT_CODE=d.DEPT_ID)
+    join job j on (e.JOB_CODE = j.JOB_CODE)
+    WHERE 
+    E.DEPT_CODE = (
+					SELECT
+                    DEPT_CODE
+                    FROM
+                    EMPLOYEE
+                    WHERE EMP_NO = (SELECT
+									EMP_NO
+                                    FROM
+                                    EMPLOYEE
+                                    WHERE ENT_YN = 'Y' AND EMP_NO LIKE '%-%' LIMIT 1)
+                                    )
+    AND E.JOB_CODE = (SELECT
+					  JOB_CODE
+					  FROM
+                      EMPLOYEE
+                      WHERE
+                      EMP_NO = (SELECT
+								EMP_NO
+                                FROM
+                                EMPLOYEE
+                                WHERE ENT_YN = 'Y' AND EMP_NO LIKE '%-%' LIMIT 1))
+    AND E.ENT_YN = 'N';
+    
 
 
 -- 9.급여 평균 3위 안에 드는 부서의 
 -- 부서 코드와 부서명, 평균급여를 조회하세요
 -- limit 사용
 
+SELECT 
+    D.DEPT_ID AS 부서코드,
+    D.DEPT_TITLE AS 부서명,
+    AVG(E.SALARY) AS 평균급여
+FROM 
+    EMPLOYEE E
+JOIN 
+    DEPARTMENT D ON E.DEPT_CODE = D.DEPT_ID
+GROUP BY 
+    D.DEPT_ID, D.DEPT_TITLE
+ORDER BY 
+    평균급여 DESC
+LIMIT 3;
+
 
 -- 10.직원 정보에서 급여를 가장 많이 받는 순으로 이름, 급여, 순위 조회
 -- 힌트 : DENSE_RANK() OVER or RANK() OVER
+
+SELECT 
+    EMP_NAME AS 이름,
+    SALARY AS 급여,
+    DENSE_RANK() OVER (ORDER BY SALARY DESC) AS 순위
+FROM 
+    EMPLOYEE
+ORDER BY 
+    SALARY DESC;
+
 
 
 -- 11.부서별 급여 합계가 전체 급여의 총 합의 20%보다 많은
 -- 부서의 부서명과, 부서별 급여 합계 조회
 -- 힌트 : SUM(E2.SALARY) * 0.2
+
+SELECT 
+    D.DEPT_TITLE AS 부서명,
+    SUM(E.SALARY) AS 부서별급여합계
+FROM 
+    EMPLOYEE E
+JOIN 
+    DEPARTMENT D ON E.DEPT_CODE = D.DEPT_ID
+GROUP BY 
+    D.DEPT_TITLE
+HAVING 
+    SUM(E.SALARY) > (SELECT SUM(SALARY) * 0.2 FROM EMPLOYEE);
